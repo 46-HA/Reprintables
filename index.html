@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clipart Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        img {
+            max-width: 500px;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Search for Clipart</h1>
+    <input type="text" id="searchQuery" placeholder="Enter a keyword like 'dog'">
+    <button onclick="searchClipart()">Search</button>
+
+    <div id="errorMessage" class="error"></div>
+    <div id="resultContainer"></div>
+
+    <script>
+        // Replace with your actual Pexels API Key
+        const API_KEY = 'VKO7bCxtHgi2d4oqZOjU5m4ewYPdZUJwLNGMTdIch6a0vO6LphKMiflN';
+
+        async function searchClipart() {
+            const query = document.getElementById('searchQuery').value;
+            if (!query) {
+                alert("Please enter a search term.");
+                return;
+            }
+
+            // Clear previous results
+            document.getElementById('resultContainer').innerHTML = '';
+            document.getElementById('errorMessage').innerText = '';
+
+            try {
+                // Fetch data from Pexels API
+                const response = await fetch(`https://api.pexels.com/v1/search?query=${query}&per_page=1`, {
+                    headers: {
+                        Authorization: `Bearer ${API_KEY}`,
+                    }
+                });
+
+                const data = await response.json();
+
+                // Check if results exist
+                if (data.photos && data.photos.length > 0) {
+                    const imageUrl = data.photos[0].src.medium;  // Choose the image size you prefer
+                    document.getElementById('resultContainer').innerHTML = `<img src="${imageUrl}" alt="${query} clipart">`;
+                } else {
+                    document.getElementById('errorMessage').innerText = 'No clipart found for your search.';
+                }
+            } catch (error) {
+                document.getElementById('errorMessage').innerText = 'Error fetching clipart.';
+            }
+        }
+    </script>
+
+</body>
+</html>

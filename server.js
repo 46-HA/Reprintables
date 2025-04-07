@@ -1,46 +1,53 @@
-import express from 'express';
-import axios from 'axios';
-import path from 'path';
-import { fileURLToPath } from 'url';  // Import the fileURLToPath utility
+import fetch from 'node-fetch';  // Ensure you have node-fetch installed (npm install node-fetch)
+import dotenv from 'dotenv';     // For loading environment variables from the .env file
+import readline from 'readline'; // For getting user input from the command line
 
-// Initialize Express app
-const app = express();
-const port = process.env.PORT || 5000;
+// Load environment variables from .env file
+dotenv.config();
 
-// Middleware to allow CORS for development
-import cors from 'cors';
-app.use(cors());
+const UNSPLASH_API_KEY = process.env.ACCESS; // Get the API key from the .env file
 
-// Get __dirname equivalent in ES Modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Initialize readline interface for user input
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
-// Serve the React build files (production build)
-app.use(express.static(path.join(__dirname, 'build')));
+// Function to search photos on Unsplash
+async function searchPhotos(query, page = 1, per_page = 1) {
+  const url = `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&page=${page}&per_page=${per_page}&client_id=${UNSPLASH_API_KEY}`;
 
-// API route to fetch data from the external URL
-app.get('/api/fetch-data', async (req, res) => {
   try {
-    const url = 'https://xggsokc0oko08csowos0wowo.a.selfhosted.hackclub.com/'; // The external URL
+    // Fetch data from Unsplash
+    const response = await fetch(url);
 
-    // Make the GET request using Axios
-    const response = await axios.get(url);
+    // Handle if the response is not ok (status code not in 200 range)
+    if (!response.ok) {
+      throw new Error(`Error fetching data from Unsplash: ${response.statusText}`);
+    }
 
-    // Send the response back to the frontend
-    res.json(response.data);
+    // Parse JSON response
+    const data = await response.json();
+
+    // Check if we have results
+    if (data.results && data.results.length > 0) {
+      // Log the image URL(s) of the fetched photos
+      data.results.forEach((photo, index) => {
+        console.log(`Photo ${index + 1}: ${photo.urls.small}`); // URL to small-sized image
+      });
+    } else {
+      console.log('No images found for your search.');
+    }
   } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Failed to fetch data from external API' });
+    console.error('Error:', error.message);
   }
-});
+}
 
-// Catch-all handler for any request that doesn't match an API route
-// This will serve the React app for any other route
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
-
-// Start the server
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+// Ask the user for a search query
+rl.question('Enter a search term (e.g., "dog"): ', (query) => {
+  // Perform the search with the user-provided query
+  searchPhotos(query, 1, 5); // You can adjust the page and per_page parameters
+  
+  // Close the readline interface after the search is complete
+  rl.close();
 });
