@@ -14,6 +14,66 @@ body {
     overflow-y: scroll;  /* Allows vertical scroll */
 }
 
+/* Modal Styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 50%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.close-btn {
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    float: right;
+    cursor: pointer;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Form Styles */
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #ff4081;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #e6005c;
+}
+
 /* Hero Section */
 .hero-section {
     background-size: cover;
@@ -25,19 +85,6 @@ body {
     align-items: center;
     flex-direction: column;
     text-align: center;
-    animation: fadeIn 2s ease-in-out;
-}
-
-.headline {
-    font-size: 4rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-    animation: slideInFromTop 2s ease-in-out;
-}
-
-.tagline {
-    font-size: 1.5rem;
-    margin-bottom: 30px;
 }
 
 .cta-btn {
@@ -49,7 +96,6 @@ body {
     font-size: 1.2rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    animation: fadeIn 3s ease-in-out;
 }
 
 .cta-btn:hover {
@@ -80,30 +126,8 @@ body {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Image Styling */
 .image-container img {
     max-width: 100%;
     height: auto;
     border-radius: 10px;
-}
-
-/* Animation for Scroll */
-@keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
-}
-
-@keyframes slideInFromTop {
-    0% {
-        transform: translateY(-100px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
 }

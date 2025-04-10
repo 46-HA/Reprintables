@@ -1,20 +1,63 @@
-// JavaScript to handle vertical scroll triggering horizontal scroll
-let lastScrollTop = 0; // Keeps track of the previous scroll position
+// JavaScript for user authentication with local storage
 
-window.addEventListener('scroll', function () {
-    let currentScroll = window.scrollY; // Get current scroll position
+// Show Login Form
+function showLoginForm() {
+    document.getElementById('login-modal').style.display = 'block';
+}
 
-    // Calculate scroll delta
-    let delta = currentScroll - lastScrollTop;
+// Close Login Form
+function closeLoginForm() {
+    document.getElementById('login-modal').style.display = 'none';
+}
 
-    if (delta > 0) {
-        // Scroll down - move content left
-        document.querySelector('.scrolling-content').style.transform = `translateX(-${currentScroll}px)`;
+// Show Sign Up Form
+function showSignupForm() {
+    document.getElementById('signup-modal').style.display = 'block';
+}
+
+// Close Sign Up Form
+function closeSignupForm() {
+    document.getElementById('signup-modal').style.display = 'none';
+}
+
+// Handle Login
+document.getElementById('login-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    const user = users.find(user => user.email === email && user.password === password);
+
+    if (user) {
+        alert('Login successful!');
+        closeLoginForm();
+        // Redirect to dashboard or main page
     } else {
-        // Scroll up - move content right
-        document.querySelector('.scrolling-content').style.transform = `translateX(-${currentScroll}px)`;
+        alert('Invalid email or password');
     }
+});
 
-    // Update lastScrollTop to current scroll position
-    lastScrollTop = currentScroll <= 0 ? 0 : currentScroll;
+// Handle Signup
+document.getElementById('signup-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const email = document.getElementById('signup-email').value;
+    const password = document.getElementById('signup-password').value;
+
+    const users = JSON.parse(localStorage.getItem('users')) || [];
+
+    const userExists = users.find(user => user.email === email);
+
+    if (userExists) {
+        alert('User already exists!');
+    } else {
+        const newUser = { email, password };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Sign up successful!');
+        closeSignupForm();
+    }
 });

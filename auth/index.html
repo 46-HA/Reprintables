@@ -14,8 +14,39 @@
             <h1 class="headline">Reprintables</h1>
             <p class="tagline">Nothing hard, just make a card</p>
             <button class="cta-btn" onclick="showLoginForm()">Get Started</button>
+            <button class="cta-btn" onclick="showSignupForm()">Sign Up</button>
         </div>
     </header>
+
+    <!-- Login Form Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLoginForm()">×</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" required>
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Form Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeSignupForm()">×</span>
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <label for="signup-email">Email:</label>
+                <input type="email" id="signup-email" required>
+                <label for="signup-password">Password:</label>
+                <input type="password" id="signup-password" required>
+                <button type="submit">Sign Up</button>
+            </form>
+        </div>
+    </div>
 
     <!-- Scroll Section - Horizontal Scroll Container -->
     <div class="scrolling-container">
