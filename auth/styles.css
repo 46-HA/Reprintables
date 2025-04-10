@@ -1,0 +1,109 @@
+/* General Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #d5006f, #a0a0a0); /* Dark pink to gray gradient */
+    overflow-x: hidden; /* Prevent horizontal scroll on the body */
+    overflow-y: scroll;  /* Allows vertical scroll */
+}
+
+/* Hero Section */
+.hero-section {
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    animation: fadeIn 2s ease-in-out;
+}
+
+.headline {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    animation: slideInFromTop 2s ease-in-out;
+}
+
+.tagline {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+}
+
+.cta-btn {
+    padding: 15px 40px;
+    background-color: #ff4081;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    animation: fadeIn 3s ease-in-out;
+}
+
+.cta-btn:hover {
+    background-color: #e6005c;
+}
+
+/* Scroll Container */
+.scrolling-container {
+    position: relative;
+    height: 200vh; /* Increase height for scroll effect */
+}
+
+/* Scroll Section - Horizontal Scroll Container */
+.scrolling-content {
+    display: flex;
+    flex-direction: row; /* Align items horizontally */
+    overflow-x: hidden; /* Hide horizontal scroll */
+    width: 300%; /* Increase width to accommodate all sections */
+    transition: transform 0.5s ease-out;
+}
+
+.section {
+    flex: 0 0 100vw; /* Each section takes up the full width of the viewport */
+    padding: 20px;
+    text-align: center;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Image Styling */
+.image-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* Animation for Scroll */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInFromTop {
+    0% {
+        transform: translateY(-100px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
