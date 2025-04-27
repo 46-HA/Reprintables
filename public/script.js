@@ -3,6 +3,19 @@ const wrapper = document.getElementById('canvas-wrapper');
 const ctx = canvas.getContext('2d');
 let drawing = false;
 let textToolActive = false;
+let currentFont = 'Arial';
+let currentColor = '#000000';
+
+const fontSelect = document.getElementById('font-select');
+const colorPicker = document.getElementById('color-picker');
+
+fontSelect.addEventListener('change', e => {
+  currentFont = e.target.value;
+});
+
+colorPicker.addEventListener('input', e => {
+  currentColor = e.target.value;
+});
 
 canvas.addEventListener('mousedown', () => {
   if (!textToolActive) drawing = true;
@@ -40,8 +53,9 @@ function createTextBox(x, y) {
   box.contentEditable = true;
   box.style.left = x + 'px';
   box.style.top = y + 'px';
+  box.style.font = `20px ${currentFont}`;
+  box.style.color = currentColor;
   box.style.transform = 'rotate(0deg)';
-  box.style.font = '20px Arial';
 
   makeDraggable(box);
   wrapper.appendChild(box);
@@ -93,8 +107,8 @@ function submitDesign() {
     ctx.save();
     ctx.translate(x, y);
     ctx.rotate((rotation * Math.PI) / 180);
-    ctx.font = '20px Arial';
-    ctx.fillStyle = '#000';
+    ctx.font = `20px ${box.style.fontFamily}`;
+    ctx.fillStyle = box.style.color;
     ctx.fillText(box.innerText, 0, 20);
     ctx.restore();
 

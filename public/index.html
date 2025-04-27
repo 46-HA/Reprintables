@@ -37,6 +37,10 @@
       padding: 8px;
       margin: 5px;
     }
+    #controls select, #controls input {
+      padding: 5px;
+      margin: 5px;
+    }
   </style>
 </head>
 <body>
@@ -46,6 +50,18 @@
   <div id="controls">
     <button onclick="activateTextTool()">T</button>
     <button onclick="submitDesign()">Submit</button>
+    <br/>
+    <label for="font-select">Font: </label>
+    <select id="font-select">
+      <option value="Arial">Arial</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Courier New">Courier New</option>
+      <option value="Times New Roman">Times New Roman</option>
+    </select>
+    <br/>
+    <label for="color-picker">Text Color: </label>
+    <input type="color" id="color-picker" value="#000000">
   </div>
 
   <div id="canvas-wrapper">
