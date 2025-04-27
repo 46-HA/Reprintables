@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reprintables</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #canvas-wrapper {
+      position: relative;
+      display: inline-block;
+      border: 2px solid #333;
+      margin-top: 20px;
+    }
+    canvas {
+      background: #fff;
+      display: block;
+    }
+    .text-box {
+      position: absolute;
+      min-width: 60px;
+      min-height: 30px;
+      padding: 5px;
+      border: 1px dashed #000;
+      cursor: move;
+      resize: both;
+      overflow: auto;
+      transform-origin: top left;
+    }
+    #controls {
+      margin-top: 15px;
+    }
+    #controls button {
+      padding: 8px;
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Reprintables</h1>
+  <p>Draw or design anything and submit your art!</p>
+
+  <div id="controls">
+    <button onclick="activateTextTool()">T</button>
+    <button onclick="submitDesign()">Submit</button>
+  </div>
+
+  <div id="canvas-wrapper">
+    <canvas id="canvas" width="800" height="500"></canvas>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
