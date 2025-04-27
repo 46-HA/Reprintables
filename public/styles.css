@@ -1,0 +1,62 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  #canvas-wrapper {
+    position: relative;
+    border: 1px solid #000;
+    margin-top: 20px;
+  }
+  
+  #canvas {
+    border: 1px solid #000;
+  }
+  
+  #controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  button {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  select, input[type="color"] {
+    padding: 5px;
+    font-size: 14px;
+  }
+  
+  .text-box {
+    position: absolute;
+    font-family: Arial, sans-serif;
+    font-size: 20px;
+    color: #000;
+    border: 1px solid #ccc;
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .text-box:focus {
+    outline: none;
+  }
+  
+  #text-toolbar {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px;
+    margin-top: 10px;
+    background: #f0f0f0;
+    border-top: 1px solid #ccc;
+    width: 100%;
+  }
+  

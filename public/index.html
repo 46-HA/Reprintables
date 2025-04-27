@@ -1,86 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reprintables</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Open+Sans:wght@300;400&family=Lobster&family=Oswald:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    #canvas-wrapper {
-      position: relative;
-      display: inline-block;
-      border: 2px solid #333;
-      margin-top: 20px;
-    }
-    canvas {
-      background: #fff;
-      display: block;
-    }
-    .text-box {
-      position: absolute;
-      min-width: 60px;
-      min-height: 30px;
-      padding: 5px;
-      border: 1px dashed #000;
-      cursor: move;
-      resize: both;
-      overflow: auto;
-      transform-origin: top left;
-      box-sizing: border-box;
-    }
-    .text-box-toolbar {
-      position: absolute;
-      top: -30px;
-      left: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #f0f0f0;
-      padding: 5px;
-      border-bottom: 1px solid #ccc;
-    }
-    .text-box-toolbar select, .text-box-toolbar input {
-      padding: 5px;
-    }
-    #controls {
-      margin-top: 15px;
-    }
-    #controls button {
-      padding: 8px;
-      margin: 5px;
-    }
-    #controls select, #controls input {
-      padding: 5px;
-      margin: 5px;
-    }
-    .font-dropdown {
-      display: inline-block;
-    }
-    .font-dropdown select {
-      padding: 5px;
-      margin: 5px;
-    }
-  </style>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Reprintables</h1>
-  <p>Draw or design anything and submit your art!</p>
 
+  <h1>Reprintables</h1>
   <div id="controls">
-    <button onclick="activateTextTool()">T</button>
-    <button onclick="submitDesign()">Submit</button>
-    <br/>
-    <label for="color-picker">Text Color: </label>
-    <input type="color" id="color-picker" value="#000000">
+    <button id="text-mode-button">Text (Add Text)</button>
+    <button id="draw-mode-button">Draw</button>
+    <button id="submit-button">Submit</button>
   </div>
 
   <div id="canvas-wrapper">
-    <canvas id="canvas" width="800" height="500"></canvas>
+    <canvas id="canvas" width="800" height="600"></canvas>
+  </div>
+
+  <div id="text-toolbar" style="display: none;">
+    <select id="font-select">
+      <option value="Arial">Arial</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Courier New">Courier New</option>
+    </select>
+    <select id="font-size-select">
+      <option value="20">20px</option>
+      <option value="30">30px</option>
+      <option value="40">40px</option>
+    </select>
+    <input type="color" id="text-color" value="#000000">
   </div>
 
   <script src="script.js"></script>
