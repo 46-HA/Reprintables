@@ -9,17 +9,15 @@
 <body>
 
   <h1>Reprintables</h1>
+
   <div id="controls">
-    <button id="text-mode-button">Text (Add Text)</button>
-    <button id="draw-mode-button">Draw</button>
-    <button id="submit-button">Submit</button>
-  </div>
-
-  <div id="canvas-wrapper">
-    <canvas id="canvas" width="800" height="600"></canvas>
-  </div>
-
-  <div id="text-toolbar" style="display: none;">
+    <button id="text-mode-button">Text Mode</button>
+    <button id="draw-mode-button">Draw Mode</button>
+    <button id="clear-button">Clear</button>
+    <button id="fill-bg-button">Fill Background</button>
+    <input type="file" id="image-upload" accept="image/*">
+    <label for="image-upload">Upload Image</label>
+    <input type="color" id="bg-fill" value="#ffffff">
     <select id="font-select">
       <option value="Arial">Arial</option>
       <option value="Verdana">Verdana</option>
@@ -32,6 +30,23 @@
       <option value="40">40px</option>
     </select>
     <input type="color" id="text-color" value="#000000">
+  </div>
+
+  <div id="canvas-wrapper">
+    <canvas id="canvas" width="800" height="600"></canvas>
+  </div>
+
+  <div id="text-toolbar" style="display: none;">
+    <button id="save-address-button">Save Address</button>
+  </div>
+
+  <div id="address-form" style="display: none;">
+    <input type="text" id="name" placeholder="Your Name">
+    <input type="text" id="address" placeholder="Street Address">
+    <input type="text" id="city" placeholder="City">
+    <input type="text" id="state" placeholder="State">
+    <input type="text" id="zip" placeholder="ZIP Code">
+    <button id="submit-address">Submit Address</button>
   </div>
 
   <script src="script.js"></script>
