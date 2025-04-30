@@ -1,4 +1,3 @@
-// Konva Setup
 var width = window.innerWidth;
 var height = window.innerHeight;
 
@@ -11,7 +10,6 @@ var stage = new Konva.Stage({
 var layer = new Konva.Layer();
 stage.add(layer);
 
-// Variables for controlling canvas
 const textModeButton = document.getElementById('text-mode-button');
 const drawModeButton = document.getElementById('draw-mode-button');
 const clearButton = document.getElementById('clear-button');
@@ -29,17 +27,17 @@ const previewCtx = previewCanvas.getContext('2d');
 const submissionForm = document.getElementById('submission-form');
 
 let currentMode = 'draw';
-let textModeActive = false; // Track if text mode is active
+let textModeActive = false;
 
-// Initial canvas background
 function setCanvasBackground(color) {
-  layer.clear();
+  layer.destroyChildren();
   let rect = new Konva.Rect({
     x: 0,
     y: 0,
     width: width,
     height: height,
     fill: color,
+    name: 'background',
   });
   layer.add(rect);
   layer.batchDraw();
@@ -47,28 +45,21 @@ function setCanvasBackground(color) {
 
 setCanvasBackground('#ffffff');
 
-// Text Tool - Create and Manipulate Text
 function activateTextTool() {
-  // If text mode is already active, return early
-  if (textModeActive) {
-    return;
-  }
-
-  // Activate text mode and allow text creation
+  if (textModeActive) return;
   textModeActive = true;
   currentMode = 'text';
 
-  // Allow user to click on the canvas to add text
-  stage.on('click', function (e) {
+  stage.on('click.textMode', function (e) {
     if (currentMode === 'text' && !e.target.hasName('text')) {
       createTextNode(e.evt.offsetX, e.evt.offsetY);
-      textModeActive = false; // Disable further text creation until button is pressed again
+      textModeActive = false;
+      stage.off('click.textMode');
     }
   });
 }
 
 function createTextNode(x, y) {
-  // Create the text node at the clicked position
   var textNode = new Konva.Text({
     text: 'Double-click to edit',
     x: x,
@@ -80,37 +71,73 @@ function createTextNode(x, y) {
     name: 'text',
   });
 
-  // Add the text node to the layer
   layer.add(textNode);
-  layer.batchDraw();
+  layer.draw();
 
-  // Disable editing by preventing text updates
-  textNode.on('dblclick', function () {
-    console.log("Text cannot be edited.");
-    // You can add additional logic here if needed (e.g., alert the user they can't edit)
+  var tr = new Konva.Transformer({
+    node: textNode,
+    enabledAnchors: [],
   });
+  layer.add(tr);
 
-  // Allow the user to move the text
-  textNode.on('dragmove', function () {
-    textNode.setAttrs({
-      x: textNode.x(),
-      y: textNode.y(),
+  textNode.on('dblclick', () => {
+    textNode.hide();
+    tr.hide();
+    layer.draw();
+
+    const textPosition = textNode.absolutePosition();
+    const stageBox = stage.container().getBoundingClientRect();
+
+    const area = document.createElement('textarea');
+    document.body.appendChild(area);
+
+    area.value = textNode.text();
+    area.style.position = 'absolute';
+    area.style.top = `${stageBox.top + textPosition.y}px`;
+    area.style.left = `${stageBox.left + textPosition.x}px`;
+    area.style.fontSize = textNode.fontSize() + 'px';
+    area.style.fontFamily = textNode.fontFamily();
+    area.style.color = textNode.fill();
+    area.style.padding = '0';
+    area.style.margin = '0';
+    area.style.border = '1px solid #ccc';
+    area.style.background = 'white';
+    area.style.outline = 'none';
+    area.style.resize = 'none';
+    area.style.lineHeight = textNode.lineHeight();
+    area.style.textAlign = textNode.align();
+    area.style.minWidth = '50px';
+
+    area.focus();
+
+    area.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        textNode.text(area.value);
+        document.body.removeChild(area);
+        textNode.show();
+        tr.nodes([textNode]);
+        tr.show();
+        layer.draw();
+      } else if (e.key === 'Escape') {
+        document.body.removeChild(area);
+        textNode.show();
+        tr.nodes([textNode]);
+        tr.show();
+        layer.draw();
+      }
     });
-    layer.batchDraw();
   });
 }
 
-// Modes
 textModeButton.addEventListener('click', () => {
-  activateTextTool(); // Activate the text tool
+  activateTextTool();
 });
-
 drawModeButton.addEventListener('click', () => {
   currentMode = 'draw';
-  textModeActive = false; // Reset text mode when switching to draw mode
+  textModeActive = false;
+  stage.off('click.textMode');
 });
 
-// Clear and Fill Background
 clearButton.addEventListener('click', () => {
   setCanvasBackground('#ffffff');
 });
@@ -118,7 +145,6 @@ fillBgButton.addEventListener('click', () => {
   setCanvasBackground(bgFillInput.value);
 });
 
-// Image Upload
 imageUpload.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file && file.type.startsWith('image/')) {
@@ -142,11 +168,10 @@ imageUpload.addEventListener('change', (e) => {
   }
 });
 
-// Submit Modal
 submitButton.addEventListener('click', () => {
   modal.style.display = 'flex';
   previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
-  previewCtx.drawImage(stage.toCanvas()._canvas, 0, 0);
+  previewCtx.drawImage(stage.toCanvas()._canvas, 0, 0, previewCanvas.width, previewCanvas.height);
 });
 
 closeModal.addEventListener('click', () => {
