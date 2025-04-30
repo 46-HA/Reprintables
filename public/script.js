@@ -25,6 +25,7 @@ const closeModal = document.getElementById('close-modal');
 const previewCanvas = document.getElementById('preview-canvas');
 const previewCtx = previewCanvas.getContext('2d');
 const submissionForm = document.getElementById('submission-form');
+const textControls = document.getElementById('text-controls');
 
 let currentMode = 'draw';
 let textModeActive = false;
@@ -76,9 +77,27 @@ function createTextNode(x, y) {
 
   var tr = new Konva.Transformer({
     node: textNode,
-    enabledAnchors: [],
+    enabledAnchors: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+    boundBoxFunc: function (oldBox, newBox) {
+      if (newBox.width < 20 || newBox.height < 10) {
+        return oldBox;
+      }
+      return newBox;
+    },
   });
   layer.add(tr);
+
+  tr.on('transform', () => {
+    const scaleX = textNode.scaleX();
+    const scaleY = textNode.scaleY();
+    textNode.setAttrs({
+      fontSize: textNode.fontSize() * scaleY,
+      width: textNode.width() * scaleX,
+      scaleX: 1,
+      scaleY: 1,
+    });
+    layer.batchDraw();
+  });
 
   textNode.on('dblclick', () => {
     textNode.hide();
@@ -127,7 +146,42 @@ function createTextNode(x, y) {
       }
     });
   });
+
+  textNode.on('click', () => {
+    const position = textNode.getClientRect();
+    const stageBox = stage.container().getBoundingClientRect();
+
+    const top = stageBox.top + position.y + position.height;
+    const left = stageBox.left + position.x;
+
+    textControls.style.top = `${top}px`;
+    textControls.style.left = `${left}px`;
+    textControls.style.display = 'block';
+
+    fontSelect.value = textNode.fontFamily();
+    fontSizeSelect.value = textNode.fontSize();
+    textColorInput.value = textNode.fill();
+
+    fontSelect.oninput = () => {
+      textNode.fontFamily(fontSelect.value);
+      layer.draw();
+    };
+    fontSizeSelect.oninput = () => {
+      textNode.fontSize(parseInt(fontSizeSelect.value));
+      layer.draw();
+    };
+    textColorInput.oninput = () => {
+      textNode.fill(textColorInput.value);
+      layer.draw();
+    };
+  });
 }
+
+stage.on('click', (e) => {
+  if (!e.target.hasName('text')) {
+    textControls.style.display = 'none';
+  }
+});
 
 textModeButton.addEventListener('click', () => {
   activateTextTool();
@@ -136,6 +190,7 @@ drawModeButton.addEventListener('click', () => {
   currentMode = 'draw';
   textModeActive = false;
   stage.off('click.textMode');
+  textControls.style.display = 'none';
 });
 
 clearButton.addEventListener('click', () => {

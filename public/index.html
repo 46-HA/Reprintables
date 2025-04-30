@@ -14,38 +14,11 @@
   <div id="controls">
     <button id="text-mode-button">Text Mode</button>
     <button id="draw-mode-button">Draw Mode</button>
-
-    <div id="draw-options">
-      <label for="draw-color">Color:</label>
-      <input type="color" id="draw-color" value="#000000" />
-
-      <label for="line-width">Line Width:</label>
-      <select id="line-width">
-        <option value="1">1px</option>
-        <option value="2" selected>2px</option>
-        <option value="5">5px</option>
-        <option value="10">10px</option>
-        <option value="20">20px</option>
-      </select>
-    </div>
-
     <button id="clear-button">Clear</button>
     <button id="fill-bg-button">Fill Background</button>
     <input type="file" id="image-upload" accept="image/*" />
     <label for="image-upload">Upload Image</label>
     <input type="color" id="bg-fill" value="#ffffff" />
-    <select id="font-select">
-      <option value="Arial">Arial</option>
-      <option value="Verdana">Verdana</option>
-      <option value="Georgia">Georgia</option>
-      <option value="Courier New">Courier New</option>
-    </select>
-    <select id="font-size-select">
-      <option value="20">20px</option>
-      <option value="30">30px</option>
-      <option value="40">40px</option>
-    </select>
-    <input type="color" id="text-color" value="#000000" />
     <button id="submit-button">Submit</button>
   </div>
 
@@ -53,7 +26,6 @@
     <div id="container"></div>
   </div>
 
-  <!-- Modal for Submission -->
   <div id="submission-modal" class="modal">
     <div class="modal-content">
       <span class="close-button" id="close-modal">&times;</span>
@@ -68,6 +40,21 @@
         <button type="submit">Submit</button>
       </form>
     </div>
+  </div>
+
+  <div id="text-controls" style="display: none; position: absolute;">
+    <select id="font-select">
+      <option value="Arial">Arial</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Courier New">Courier New</option>
+    </select>
+    <select id="font-size-select">
+      <option value="20">20px</option>
+      <option value="30">30px</option>
+      <option value="40">40px</option>
+    </select>
+    <input type="color" id="text-color" value="#000000" />
   </div>
 
   <script src="script.js"></script>
