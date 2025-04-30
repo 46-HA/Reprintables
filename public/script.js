@@ -1,6 +1,17 @@
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const wrapper = document.getElementById('canvas-wrapper');
+// Konva Setup
+var width = window.innerWidth;
+var height = window.innerHeight;
+
+var stage = new Konva.Stage({
+  container: 'container',
+  width: width,
+  height: height,
+});
+
+var layer = new Konva.Layer();
+stage.add(layer);
+
+// Variables for controlling canvas
 const textModeButton = document.getElementById('text-mode-button');
 const drawModeButton = document.getElementById('draw-mode-button');
 const clearButton = document.getElementById('clear-button');
@@ -10,74 +21,104 @@ const bgFillInput = document.getElementById('bg-fill');
 const fontSelect = document.getElementById('font-select');
 const fontSizeSelect = document.getElementById('font-size-select');
 const textColorInput = document.getElementById('text-color');
-const textToolbar = document.getElementById('text-toolbar');
-const saveAddressButton = document.getElementById('save-address-button');
-const addressForm = document.getElementById('address-form');
-const submitAddressButton = document.getElementById('submit-address');
+const submitButton = document.getElementById('submit-button');
+const modal = document.getElementById('submission-modal');
+const closeModal = document.getElementById('close-modal');
+const previewCanvas = document.getElementById('preview-canvas');
+const previewCtx = previewCanvas.getContext('2d');
+const submissionForm = document.getElementById('submission-form');
 
-let isDrawing = false;
 let currentMode = 'draw';
-let activeTextBox = null;
-let textBoxes = [];
+let textModeActive = false; // Track if text mode is active
 
-// Set initial canvas background color to white
+// Initial canvas background
 function setCanvasBackground(color) {
-  ctx.fillStyle = color;
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  layer.clear();
+  let rect = new Konva.Rect({
+    x: 0,
+    y: 0,
+    width: width,
+    height: height,
+    fill: color,
+  });
+  layer.add(rect);
+  layer.batchDraw();
 }
 
 setCanvasBackground('#ffffff');
 
-// Handle draw mode
-canvas.addEventListener('mousedown', (e) => {
-  if (currentMode === 'draw') {
-    isDrawing = true;
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
+// Text Tool - Create and Manipulate Text
+function activateTextTool() {
+  // If text mode is already active, return early
+  if (textModeActive) {
+    return;
   }
-});
 
-canvas.addEventListener('mousemove', (e) => {
-  if (currentMode === 'draw' && isDrawing) {
-    ctx.lineWidth = 2;
-    ctx.lineCap = 'round';
-    ctx.strokeStyle = textColorInput.value;
-    ctx.lineTo(e.offsetX, e.offsetY);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(e.offsetX, e.offsetY);
-  }
-});
+  // Activate text mode and allow text creation
+  textModeActive = true;
+  currentMode = 'text';
 
-canvas.addEventListener('mouseup', () => {
-  isDrawing = false;
-  ctx.beginPath();
-});
+  // Allow user to click on the canvas to add text
+  stage.on('click', function (e) {
+    if (currentMode === 'text' && !e.target.hasName('text')) {
+      createTextNode(e.evt.offsetX, e.evt.offsetY);
+      textModeActive = false; // Disable further text creation until button is pressed again
+    }
+  });
+}
 
-// Switch to text mode
+function createTextNode(x, y) {
+  // Create the text node at the clicked position
+  var textNode = new Konva.Text({
+    text: 'Double-click to edit',
+    x: x,
+    y: y,
+    fontSize: parseInt(fontSizeSelect.value),
+    fontFamily: fontSelect.value,
+    fill: textColorInput.value,
+    draggable: true,
+    name: 'text',
+  });
+
+  // Add the text node to the layer
+  layer.add(textNode);
+  layer.batchDraw();
+
+  // Disable editing by preventing text updates
+  textNode.on('dblclick', function () {
+    console.log("Text cannot be edited.");
+    // You can add additional logic here if needed (e.g., alert the user they can't edit)
+  });
+
+  // Allow the user to move the text
+  textNode.on('dragmove', function () {
+    textNode.setAttrs({
+      x: textNode.x(),
+      y: textNode.y(),
+    });
+    layer.batchDraw();
+  });
+}
+
+// Modes
 textModeButton.addEventListener('click', () => {
-  activateTextTool();
+  activateTextTool(); // Activate the text tool
 });
 
-// Switch to draw mode
 drawModeButton.addEventListener('click', () => {
   currentMode = 'draw';
-  canvas.style.cursor = 'crosshair';
+  textModeActive = false; // Reset text mode when switching to draw mode
 });
 
-// Clear canvas
+// Clear and Fill Background
 clearButton.addEventListener('click', () => {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
   setCanvasBackground('#ffffff');
-  textBoxes = [];
 });
-
-// Fill background with selected color
 fillBgButton.addEventListener('click', () => {
   setCanvasBackground(bgFillInput.value);
 });
 
-// Upload image to canvas
+// Image Upload
 imageUpload.addEventListener('change', (e) => {
   const file = e.target.files[0];
   if (file && file.type.startsWith('image/')) {
@@ -85,7 +126,15 @@ imageUpload.addEventListener('change', (e) => {
     reader.onload = function (event) {
       const img = new Image();
       img.onload = function () {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        let image = new Konva.Image({
+          image: img,
+          x: 0,
+          y: 0,
+          width: width,
+          height: height,
+        });
+        layer.add(image);
+        layer.batchDraw();
       };
       img.src = event.target.result;
     };
@@ -93,122 +142,37 @@ imageUpload.addEventListener('change', (e) => {
   }
 });
 
-// Activate text tool and show text toolbar
-function activateTextTool() {
-  currentMode = 'text';
-  canvas.style.cursor = 'text';
-  canvas.onclick = (e) => {
-    if (currentMode === 'text') {
-      createTextBox(e.offsetX, e.offsetY);
-      canvas.onclick = null;
-      canvas.style.cursor = 'default';
-    }
-  };
-}
+// Submit Modal
+submitButton.addEventListener('click', () => {
+  modal.style.display = 'flex';
+  previewCtx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+  previewCtx.drawImage(stage.toCanvas()._canvas, 0, 0);
+});
 
-// Create text box on canvas
-function createTextBox(x, y) {
-  const box = document.createElement('div');
-  box.className = 'text-box';
-  box.contentEditable = true;
-  box.style.left = `${x}px`;
-  box.style.top = `${y}px`;
-  box.style.font = `${fontSizeSelect.value}px ${fontSelect.value}`;
-  box.style.color = textColorInput.value;
-  box.style.position = 'absolute';
-  box.style.minWidth = '100px';
-  box.style.zIndex = 5;
+closeModal.addEventListener('click', () => {
+  modal.style.display = 'none';
+});
 
-  makeDraggable(box);
-  wrapper.appendChild(box);
-  box.focus();
+submissionForm.addEventListener('submit', (e) => {
+  e.preventDefault();
 
-  showTextToolbar(x, y);
-  textBoxes.push(box);
-}
+  const name = document.getElementById('modal-name').value;
+  const address = document.getElementById('modal-address').value;
+  const city = document.getElementById('modal-city').value;
+  const state = document.getElementById('modal-state').value;
+  const zip = document.getElementById('modal-zip').value;
+  const imageData = stage.toDataURL();
 
-// Make text box draggable
-function makeDraggable(el) {
-  let isDragging = false;
-  let offsetX, offsetY;
-
-  el.addEventListener('mousedown', (e) => {
-    if (e.target === el) {
-      isDragging = true;
-      offsetX = e.offsetX;
-      offsetY = e.offsetY;
-      document.body.style.userSelect = 'none';
+  fetch('/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, address, city, state, zip, image: imageData }),
+  }).then((res) => {
+    if (res.ok) {
+      alert('Submission successful!');
+      modal.style.display = 'none';
+    } else {
+      alert('Submission failed.');
     }
   });
-
-  document.addEventListener('mouseup', () => {
-    isDragging = false;
-    document.body.style.userSelect = 'auto';
-  });
-
-  document.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-    let newX = e.pageX - wrapper.offsetLeft - offsetX;
-    let newY = e.pageY - wrapper.offsetTop - offsetY;
-
-    newX = Math.max(0, Math.min(newX, canvas.width - el.offsetWidth));
-    newY = Math.max(0, Math.min(newY, canvas.height - el.offsetHeight));
-
-    el.style.left = `${newX}px`;
-    el.style.top = `${newY}px`;
-
-    if (textToolbar.style.display === 'block') {
-      textToolbar.style.top = `${e.pageY + 20}px`;
-      textToolbar.style.left = `${e.pageX}px`;
-    }
-  });
-}
-
-// Show the text toolbar near the selected text box
-function showTextToolbar(x, y) {
-  textToolbar.style.display = 'block';
-  textToolbar.style.left = `${x}px`;
-  textToolbar.style.top = `${y + 40}px`;
-
-  activeTextBox = document.querySelector('.text-box');
-}
-
-// Address form display and save
-saveAddressButton.addEventListener('click', () => {
-  addressForm.style.display = 'block';
-});
-
-submitAddressButton.addEventListener('click', () => {
-  const name = document.getElementById('name').value;
-  const address = document.getElementById('address').value;
-  const city = document.getElementById('city').value;
-  const state = document.getElementById('state').value;
-  const zip = document.getElementById('zip').value;
-
-  if (name && address && city && state && zip) {
-    alert(`Address Saved:\nName: ${name}\nAddress: ${address}\nCity: ${city}\nState: ${state}\nZip: ${zip}`);
-    addressForm.reset();
-    addressForm.style.display = 'none';
-  } else {
-    alert('Please fill out all fields!');
-  }
-});
-
-// Add text box updates
-fontSelect.addEventListener('change', () => {
-  if (activeTextBox) {
-    activeTextBox.style.fontFamily = fontSelect.value;
-  }
-});
-
-fontSizeSelect.addEventListener('change', () => {
-  if (activeTextBox) {
-    activeTextBox.style.fontSize = `${fontSizeSelect.value}px`;
-  }
-});
-
-textColorInput.addEventListener('input', () => {
-  if (activeTextBox) {
-    activeTextBox.style.color = textColorInput.value;
-  }
 });
